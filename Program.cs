@@ -1,4 +1,6 @@
 using EStoreAPI.Data;
+using EStoreAPI.Services;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<MongoDbService>();
+
+builder.Services.AddScoped<IMongoDatabase>(serviceProvider =>
+{
+    var mongoDbService = serviceProvider.GetRequiredService<MongoDbService>();
+    return mongoDbService.Database;
+});
+
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 var app = builder.Build();
 
