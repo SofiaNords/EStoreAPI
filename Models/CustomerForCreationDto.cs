@@ -1,11 +1,7 @@
-﻿using MongoDB.Bson;
-
-namespace EStoreAPI.Models
+﻿namespace EStoreAPI.Models
 {
-    public class CustomerDto
+    public class CustomerForCreationDto
     {
-        public string Id { get; set; }
-
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EStoreAPI.Entities;
 using EStoreAPI.Models;
 using EStoreAPI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -28,20 +29,32 @@ namespace EStoreAPI.Controllers
             return Ok(customerDto);
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Customer>> GetById(string id)
-        //{
-        //    var filter = Builders<Customer>.Filter.Eq("_id", new ObjectId(id));
-        //    var customer = await _customers.Find(filter).FirstOrDefaultAsync();
-        //    return customer != null ? Ok(customer) : NotFound();
-        //}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomerDto>> GetCustomerById(string id)
+        {
+            var customer = await _customerRepository.GetCustomerAsync(id);
 
-        //[HttpPost]
-        //public async Task<ActionResult> Create(Customer customer)
-        //{
-        //    await _customers.InsertOneAsync(customer);
-        //    return CreatedAtAction(nameof(GetById), new { id = customer.Id }, customer);
-        //}
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            var customerDto = _mapper.Map<CustomerDto>(customer);
+
+            return Ok(customerDto);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CustomerDto>> CreateCustomer(CustomerForCreationDto customerForCreationDto)
+        {
+            var customer = _mapper.Map<Customer>(customerForCreationDto);
+
+            await _customerRepository.AddCustomerAsync(customer);
+
+            var customerDto = _mapper.Map<CustomerDto>(customer);
+          
+            return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, customer);
+        }
 
         //[HttpPut]
         //public async Task<ActionResult> Update(Customer customer)

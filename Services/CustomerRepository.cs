@@ -13,19 +13,26 @@ namespace EStoreAPI.Services
             _customerCollection = database.GetCollection<Customer>("customer");
         }
 
-
         public async Task<IEnumerable<Customer>> GetAllCustomersAsync()
         {
             return await _customerCollection.Find(c => true).ToListAsync();
         }
 
+        public async Task<Customer?> GetCustomerAsync(string customerId)
+        {
+            var customer = await _customerCollection
+                .Find(c => c.Id == customerId)
+                .FirstOrDefaultAsync();
 
+            return customer;
+        }
 
+        public async Task AddCustomerAsync(Customer customer)
+        {
+            _customerCollection.InsertOneAsync(customer);
+        }
 
-        //Task ICustomerRepository.AddCustomerAsync(Customer customer)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        
 
         //Task ICustomerRepository.DeleteCustomerAsync(Customer customer)
         //{
