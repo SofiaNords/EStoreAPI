@@ -1,17 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace EStoreAPI.Entities
 {
     public class Product
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        [BsonId]
+        public ObjectId Id { get; set; }
 
         [Required]
         [MaxLength(20)]
-        public int ProductNumber { get; set; }
+        public string ProductNumber { get; set; }
 
         [Required]
         [MaxLength(50)]
