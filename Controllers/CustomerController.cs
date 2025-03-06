@@ -1,29 +1,31 @@
-﻿using EStoreAPI.Data;
-using EStoreAPI.Entities;
+﻿using AutoMapper;
+using EStoreAPI.Models;
 using EStoreAPI.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
-using MongoDB.Driver;
 
 namespace EStoreAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController : Controller
+    [Route("api/customers")]
+    public class CustomerController : ControllerBase
     {
         private readonly ICustomerRepository _customerRepository;
+        private readonly IMapper _mapper;
 
-        public CustomerController(ICustomerRepository customerRepository)
+        public CustomerController(ICustomerRepository customerRepository,
+            IMapper mapper)
         {
-            _customerRepository = customerRepository;
+            _customerRepository = customerRepository ?? throw new ArgumentException(nameof(customerRepository));
+            _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetAllCustomers()
+        public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAllCustomers()
         {
             var customers = await _customerRepository.GetAllCustomersAsync();
-            return Ok(customers);
+
+            var customerDto = _mapper.Map<IEnumerable<CustomerDto>>(customers);
+            return Ok(customerDto);
         }
 
         //[HttpGet("{id}")]
