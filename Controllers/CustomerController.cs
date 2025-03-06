@@ -1,45 +1,60 @@
-﻿using EStoreAPI.Data;
+﻿using AutoMapper;
 using EStoreAPI.Entities;
+using EStoreAPI.Models;
 using EStoreAPI.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
-using MongoDB.Driver;
 
 namespace EStoreAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController : Controller
+    [Route("api/customers")]
+    public class CustomerController : ControllerBase
     {
         private readonly ICustomerRepository _customerRepository;
+        private readonly IMapper _mapper;
 
-        public CustomerController(ICustomerRepository customerRepository)
+        public CustomerController(ICustomerRepository customerRepository,
+            IMapper mapper)
         {
-            _customerRepository = customerRepository;
+            _customerRepository = customerRepository ?? throw new ArgumentException(nameof(customerRepository));
+            _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetAllCustomers()
+        public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAllCustomers()
         {
             var customers = await _customerRepository.GetAllCustomersAsync();
-            return Ok(customers);
+
+            var customerDto = _mapper.Map<IEnumerable<CustomerDto>>(customers);
+            return Ok(customerDto);
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Customer>> GetById(string id)
-        //{
-        //    var filter = Builders<Customer>.Filter.Eq("_id", new ObjectId(id));
-        //    var customer = await _customers.Find(filter).FirstOrDefaultAsync();
-        //    return customer != null ? Ok(customer) : NotFound();
-        //}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomerDto>> GetCustomerById(string id)
+        {
+            var customer = await _customerRepository.GetCustomerAsync(id);
 
-        //[HttpPost]
-        //public async Task<ActionResult> Create(Customer customer)
-        //{
-        //    await _customers.InsertOneAsync(customer);
-        //    return CreatedAtAction(nameof(GetById), new { id = customer.Id }, customer);
-        //}
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            var customerDto = _mapper.Map<CustomerDto>(customer);
+
+            return Ok(customerDto);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CustomerDto>> CreateCustomer(CustomerForCreationDto customerForCreationDto)
+        {
+            var customer = _mapper.Map<Customer>(customerForCreationDto);
+
+            await _customerRepository.AddCustomerAsync(customer);
+
+            var customerDto = _mapper.Map<CustomerDto>(customer);
+          
+            return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, customer);
+        }
 
         //[HttpPut]
         //public async Task<ActionResult> Update(Customer customer)
