@@ -7,6 +7,10 @@ namespace EStoreAPI.Profiles
         public OrderProfile()
         {
             CreateMap<Entities.Order, Models.OrderDto>();
+            CreateMap<Entities.OrderItem, Models.OrderItemDto>();
+            CreateMap<Models.OrderDto, Entities.Order>();
+            CreateMap<Models.OrderForCreationDto, Entities.Order>();
+            CreateMap<Models.OrderItemForCreationDto, Entities.OrderItem>();
         }
         
     }
