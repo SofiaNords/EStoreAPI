@@ -56,21 +56,47 @@ namespace EStoreAPI.Controllers
             return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, customer);
         }
 
-        //[HttpPut]
-        //public async Task<ActionResult> Update(Customer customer)
-        //{
-        //    var filter = Builders<Customer>.Filter.Eq("_id", new ObjectId(customer.Id));
 
-        //    await _customers.ReplaceOneAsync(filter, customer);
-        //    return Ok();
-        //}
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteCustomer(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
 
-        //[HttpDelete]
-        //public async Task<ActionResult> Delete(string id)
-        //{
-        //    var filter = Builders<Customer>.Filter.Eq("_id", new ObjectId(id));
-        //    await _customers.DeleteOneAsync(filter);
-        //    return Ok();
-        //}
+            var customer = await _customerRepository.GetCustomerAsync(id);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            await _customerRepository.DeleteCustomerAsync(id);
+
+            return NoContent();
+        }
+
+
+        [HttpPut]
+        public async Task<ActionResult> Update(string customerId, CustomerForUpdateDto customerForUpdateDto)
+        {
+            var customer = await _customerRepository.GetCustomerAsync(customerId);
+
+            if (customerId != customer.Id)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(customerForUpdateDto, customer);
+
+            await _customerRepository.UpdateCustomerAsync(customer);
+
+            var updatedCustomerDto = _mapper.Map<CustomerDto>(customer);
+
+            return Ok(updatedCustomerDto);
+        }
+
+  
     }
 }

@@ -9,9 +9,9 @@ namespace EStoreAPI.Services
         Task<Customer?> GetCustomerAsync(string customerId);
         Task AddCustomerAsync(Customer customer);
 
-        //Task DeleteCustomerAsync(Customer customer);
+        Task DeleteCustomerAsync(string customerId);
 
-        //Task UpdateCustomerAsync(Customer customer);
+        Task UpdateCustomerAsync(Customer customer);
 
     }
 }

@@ -7,7 +7,10 @@ namespace EStoreAPI.Profiles
         public CustomerProfile()
         {
             CreateMap<Entities.Customer, Models.CustomerDto>();
+
             CreateMap<Models.CustomerForCreationDto, Entities.Customer>();
+
+            CreateMap<Models.CustomerForUpdateDto, Entities.Customer>();
         }
     }
 }
