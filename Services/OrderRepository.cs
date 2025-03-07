@@ -19,7 +19,7 @@ namespace EStoreAPI.Services
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Order>> GetOrdersByCustomerAsync(string customerId)
+        public async Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(string customerId)
         {
             return await _orderCollection
                 .Find(o => o.CustomerId == customerId)
