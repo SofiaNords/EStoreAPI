@@ -6,7 +6,11 @@ namespace EStoreAPI.Profiles
     {
         public ProductProfile()
         {
-            
+            CreateMap<Entities.Product, Models.ProductDto>();
+
+            CreateMap<Models.ProductForCreationDto, Entities.Product>();
+
+            CreateMap<Models.ProductForUpdateDto, Entities.Product>();
         }
     }
 }
