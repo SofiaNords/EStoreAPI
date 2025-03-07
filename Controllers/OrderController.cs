@@ -45,5 +45,25 @@ namespace EStoreAPI.Controllers
 
             return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, orderDto);
         }
+
+        [HttpGet("customer/{customerId}")]
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrdersByCustomerId(string customerId)
+        {
+            // Hämta alla ordrar för kunden
+            var orders = await _orderRepository.GetOrdersByCustomerIdAsync(customerId);
+
+            // Om inga ordrar hittas
+            if (orders == null || !orders.Any())
+            {
+                return NotFound("No orders found for this customer.");
+            }
+
+            // Mappa ordrarna till DTOs
+            var orderDtos = _mapper.Map<IEnumerable<OrderDto>>(orders);
+
+            // Skicka tillbaka de mappade ordrorna
+            return Ok(orderDtos);
+        }
+
     }
 }
