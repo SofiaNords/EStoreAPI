@@ -9,7 +9,7 @@ namespace EStoreAPI.Services
 
         public ProductRepository(IMongoDatabase database)
         {
-            _productCollection = database.GetCollection<Product>("product");
+            _productCollection = database.GetCollection<Product>("products");
         }
 
         public async Task<IEnumerable<Product>> GetAllProductsAsync()
