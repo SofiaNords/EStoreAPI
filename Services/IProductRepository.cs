@@ -4,13 +4,13 @@ namespace EStoreAPI.Services
 {
     public interface IProductRepository
     {
-        Task<IEnumerable<Product>> GetAllCustomersAsync();
+        Task<IEnumerable<Product>> GetAllProductsAsync();
 
-        Task<Product?> GetCustomerAsync(string productId);
-        Task AddCustomerAsync(Product product);
+        Task<Product?> GetProductAsync(string productId);
+        Task AddProductAsync(Product product);
 
-        Task DeleteCustomerAsync(string productId);
+        Task DeleteProductAsync(string productId);
 
-        Task UpdateCustomerAsync(Product product);
+        Task UpdateProductAsync(Product product);
     }
 }
