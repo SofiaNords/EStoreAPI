@@ -32,23 +32,21 @@ namespace EStoreAPI.Services
             _customerCollection.InsertOneAsync(customer);
         }
 
-        
+        public async Task DeleteCustomerAsync(string customerId)
+        {
+            var filter = Builders<Customer>.Filter.Eq(c => c.Id, customerId);
+            var result = await _customerCollection.DeleteOneAsync(filter);
 
-        //Task ICustomerRepository.DeleteCustomerAsync(Customer customer)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //Task<Customer?> ICustomerRepository.GetCustomerAsync(int customerId)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-      
-
-        //Task ICustomerRepository.UpdateCustomerAsync(Customer customer)
-        //{
-        //    throw new NotImplementedException();
-        //}
+            if (result.DeletedCount == 0)
+            {
+                throw new KeyNotFoundException("Customer not found");
+            }
+        }
+  
+        public async Task UpdateCustomerAsync(Customer customer)
+        {
+            var filter = Builders<Customer>.Filter.Eq(c => c.Id, customer.Id);
+            var result = await _customerCollection.ReplaceOneAsync(filter, customer);
+        }
     }
 }
