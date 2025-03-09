@@ -26,6 +26,14 @@ namespace EStoreAPI.Services
             return product;
         }
 
+        public async Task<Product> GetProductByProductNumberAsync(string productNumber)
+        {
+            var filter = Builders<Product>.Filter.Eq(p => p.ProductNumber, productNumber);
+            var product = await _productCollection.Find(filter).FirstOrDefaultAsync();
+            return product;
+        }
+
+
         public async Task AddProductAsync(Product product)
         {
             _productCollection.InsertOneAsync(product);

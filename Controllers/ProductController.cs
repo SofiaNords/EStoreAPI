@@ -47,11 +47,17 @@ namespace EStoreAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductDto>> CreateProduct(ProductForCreationDto productForCreationDto)
         {
+            var existingProduct = await _productRepository.GetProductByProductNumberAsync(productForCreationDto.ProductNumber);
+            if (existingProduct != null)
+            {
+                return Conflict("Product with this product number already exists.");
+            }
+
             var product = _mapper.Map<Product>(productForCreationDto);
 
             await _productRepository.AddProductAsync(product);
 
-            var productDto = _mapper.Map<ProductDto>(product);
+            var productDto = _mapper.Map<ProductDto>(product); 
 
             return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
         }
@@ -76,15 +82,21 @@ namespace EStoreAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
 
-        public async Task<ActionResult> Update(string productId, ProductForUpdateDto productForUpdateDto)
+        public async Task<ActionResult> Update(string id, ProductForUpdateDto productForUpdateDto)
         {
-            var product = await _productRepository.GetProductAsync(productId);
+            var product = await _productRepository.GetProductAsync(id);
 
-            if (productId != product.Id)
+            if (id != product.Id)
             {
                 return NotFound();
+            }
+
+            var existingProduct = await _productRepository.GetProductByProductNumberAsync(productForUpdateDto.ProductNumber);
+            if (existingProduct != null && existingProduct.Id != product.Id)
+            {
+                return Conflict("Product with this product number already exists.");
             }
 
             _mapper.Map(productForUpdateDto, product);
