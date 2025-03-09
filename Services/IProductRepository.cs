@@ -7,6 +7,9 @@ namespace EStoreAPI.Services
         Task<IEnumerable<Product>> GetAllProductsAsync();
 
         Task<Product?> GetProductAsync(string productId);
+
+        Task<Product?> GetProductByProductNumberAsync(string productNumber);
+
         Task AddProductAsync(Product product);
 
         Task DeleteProductAsync(string productId);

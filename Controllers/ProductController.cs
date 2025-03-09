@@ -47,6 +47,12 @@ namespace EStoreAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductDto>> CreateProduct(ProductForCreationDto productForCreationDto)
         {
+            var existingProduct = await _productRepository.GetProductByProductNumberAsync(productForCreationDto.ProductNumber);
+            if (existingProduct != null)
+            {
+                return Conflict("Product with this product number already exists.");
+            }
+
             var product = _mapper.Map<Product>(productForCreationDto);
 
             await _productRepository.AddProductAsync(product);
@@ -85,6 +91,12 @@ namespace EStoreAPI.Controllers
             if (id != product.Id)
             {
                 return NotFound();
+            }
+
+            var existingProduct = await _productRepository.GetProductByProductNumberAsync(productForUpdateDto.ProductNumber);
+            if (existingProduct != null && existingProduct.Id != product.Id)
+            {
+                return Conflict("Product with this product number already exists.");
             }
 
             _mapper.Map(productForUpdateDto, product);
