@@ -51,7 +51,7 @@ namespace EStoreAPI.Controllers
 
             await _productRepository.AddProductAsync(product);
 
-            var productDto = _mapper.Map<ProductDto>(product);
+            var productDto = _mapper.Map<ProductDto>(product); 
 
             return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
         }
@@ -76,13 +76,13 @@ namespace EStoreAPI.Controllers
             return NoContent();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
 
-        public async Task<ActionResult> Update(string productId, ProductForUpdateDto productForUpdateDto)
+        public async Task<ActionResult> Update(string id, ProductForUpdateDto productForUpdateDto)
         {
-            var product = await _productRepository.GetProductAsync(productId);
+            var product = await _productRepository.GetProductAsync(id);
 
-            if (productId != product.Id)
+            if (id != product.Id)
             {
                 return NotFound();
             }
