@@ -19,17 +19,41 @@ namespace EStoreAPI.Controllers
             _mapper = mapper ?? throw new ArgumentException(nameof(productRepository));
         }
 
+        /// <summary>
+        /// Get all products
+        /// </summary>
+        /// <response code="200">
+        /// Returns a list with products
+        /// </response>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<ProductDto>), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts()
         {
             var products = await _productRepository.GetAllProductsAsync();
+
+            if (products == null || !products.Any())
+            {
+                return NotFound();
+            }
 
             var productDto = _mapper.Map<IEnumerable<ProductDto>>(products);
 
             return Ok(productDto);
         }
 
+        /// <summary>
+        /// Get a specifik product by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">
+        /// Returns a specific product by id
+        /// </response>
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(ProductDto), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<ActionResult<ProductDto>> GetProductById(string id)
         {
             var product = await _productRepository.GetProductAsync(id);
@@ -41,10 +65,22 @@ namespace EStoreAPI.Controllers
 
             var productDto = _mapper.Map<ProductDto>(product);
 
-            return Ok(productDto);
+            return CreatedAtAction(nameof(GetProductById), new { id = product.Id}, productDto);
         }
 
+        /// <summary>
+        /// Add a new product
+        /// </summary>
+        /// <param name="productForCreationDto">
+        /// The product information to create
+        /// </param>
+        /// <response code="201">
+        /// Returns the created product
+        /// </response>
         [HttpPost]
+        [ProducesResponseType(typeof(ProductDto), 201)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<ActionResult<ProductDto>> CreateProduct(ProductForCreationDto productForCreationDto)
         {
             var existingProduct = await _productRepository.GetProductByProductNumberAsync(productForCreationDto.ProductNumber);
@@ -62,12 +98,26 @@ namespace EStoreAPI.Controllers
             return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
         }
 
+
+        /// <summary>
+        /// Delete a product by id
+        /// </summary>
+        /// <param name="id">
+        /// The unique identifier of the product to delete
+        /// </param>
+        /// <response code="204">The product was successfully deleted</response>
+        /// <response code="400">If the id is invalid</response>
+        /// <response code="404">If the product was not found</response>
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]  
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<ActionResult> DeleteProduct(string id)
         {
             if (string.IsNullOrEmpty(id))
             {
-                return NotFound();
+                return BadRequest("Invalid product id");
             }
 
             var product = await _productRepository.GetProductAsync(id);
@@ -82,7 +132,25 @@ namespace EStoreAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Update a product by id
+        /// </summary>
+        /// <param name="id">
+        /// The unique identifier of the product to update</param>
+        /// <param name="productForUpdateDto">
+        /// The product information to update
+        /// </param>
+        /// <response code="200">If the product was successfully updated</response>
+        /// <response code="400">If the id is invalid or the update data is invalid</response>
+        /// <response code="404">If the product was not found</response>
+        /// <response code="409">If a product with the same product number already exists</response>
+        /// <response code="500">If an internal server error occurs</response>
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(ProductDto), 200)] 
+        [ProducesResponseType(400)]  
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(500)]
 
         public async Task<ActionResult> Update(string id, ProductForUpdateDto productForUpdateDto)
         {
