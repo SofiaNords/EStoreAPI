@@ -79,7 +79,7 @@ namespace EStoreAPI.Controllers
         /// </response>
         [HttpPost]
         [ProducesResponseType(typeof(ProductDto), 201)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
         [ProducesResponseType(500)]
         public async Task<ActionResult<ProductDto>> CreateProduct(ProductForCreationDto productForCreationDto)
         {
