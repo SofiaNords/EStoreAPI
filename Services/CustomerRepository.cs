@@ -48,5 +48,12 @@ namespace EStoreAPI.Services
             var filter = Builders<Customer>.Filter.Eq(c => c.Id, customer.Id);
             var result = await _customerCollection.ReplaceOneAsync(filter, customer);
         }
+
+        public async Task<Customer?> GetCustomerEmailAsync(string email)
+        {
+            return await _customerCollection
+                .Find(c => c.Email == email)
+                .FirstOrDefaultAsync();
+        }
     }
 }
