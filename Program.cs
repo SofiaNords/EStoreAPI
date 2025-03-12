@@ -1,6 +1,9 @@
 using EStoreAPI.Data;
 using EStoreAPI.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +12,31 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
+
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "EstoreAPI",
+        Version = "v1",
+        Description = "Ett ASP.NET Core API",
+        Contact = new OpenApiContact
+        {
+            Name = "Sofia Nordström",
+            Email = "sofia.k.nordstrom@gmail.com",
+            Url = new Uri("https://github.com/SofiaNords/EStoreAPI")
+        }, 
+        //License = new OpenApiLicense
+        //{
+        //    Name = "MIT License",
+        //    Url = new Uri("https://opensource.org/licenses/MIT")
+        //}
+    });
+});
+
 builder.Services.AddSingleton<MongoDbService>();
 
 builder.Services.AddScoped<IMongoDatabase>(serviceProvider =>

@@ -7,6 +7,8 @@ namespace EStoreAPI.Services
         Task<IEnumerable<Customer>> GetAllCustomersAsync();
 
         Task<Customer?> GetCustomerAsync(string customerId);
+
+        Task<Customer?> GetCustomerEmailAsync(string email);
         Task AddCustomerAsync(Customer customer);
 
         Task DeleteCustomerAsync(string customerId);
