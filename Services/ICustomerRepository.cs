@@ -6,6 +6,8 @@ namespace EStoreAPI.Services
     {
         Task<IEnumerable<Customer>> GetAllCustomersAsync();
 
+        Task<IEnumerable<Customer>> GetAllCustomersAsync(string? searchQuery);
+
         Task<Customer?> GetCustomerAsync(string customerId);
 
         Task<Customer?> GetCustomerEmailAsync(string email);

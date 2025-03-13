@@ -29,9 +29,10 @@ namespace EStoreAPI.Controllers
         [ProducesResponseType(typeof(IEnumerable<ProductDto>), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts(
+            [FromQuery] string? name, string? searchQuery, string? productNumber)
         {
-            var products = await _productRepository.GetAllProductsAsync();
+            var products = await _productRepository.GetAllProductsAsync(name, searchQuery, productNumber);
 
             if (products == null || !products.Any())
             {
