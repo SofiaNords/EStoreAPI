@@ -18,6 +18,26 @@ namespace EStoreAPI.Services
             return await _customerCollection.Find(c => true).ToListAsync();
         }
 
+        public async Task<IEnumerable<Customer>> GetAllCustomersAsync(string? searchQuery)
+        {
+            var filter = Builders<Customer>.Filter.Empty;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.Trim();
+                var searchFilter = Builders<Customer>.Filter.Regex(c => c.Email, new MongoDB.Bson.BsonRegularExpression(searchQuery, "i"));
+
+                filter = filter & searchFilter;
+            }
+
+            var customers = await _customerCollection.Find(filter)
+                .Sort(Builders<Customer>.Sort.Ascending(c => c.Email))
+                .ToListAsync();
+
+            return customers;
+        }
+
+
         public async Task<Customer?> GetCustomerAsync(string customerId)
         {
             var customer = await _customerCollection

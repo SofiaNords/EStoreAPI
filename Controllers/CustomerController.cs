@@ -29,9 +29,9 @@ namespace EStoreAPI.Controllers
         [ProducesResponseType(typeof(IEnumerable<CustomerDto>), 200)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAllCustomers()
+        public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAllCustomers([FromQuery] string? searchQuery)
         {
-            var customers = await _customerRepository.GetAllCustomersAsync(); 
+            var customers = await _customerRepository.GetAllCustomersAsync(searchQuery); 
 
             if (customers == null || !customers.Any()){
 
