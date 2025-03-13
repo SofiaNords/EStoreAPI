@@ -17,6 +17,20 @@ namespace EStoreAPI.Services
             return await _productCollection.Find(p => true).ToListAsync();
         }
 
+        public async Task<IEnumerable<Product>> GetAllProductsAsync(string? name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return await GetAllProductsAsync();
+            }
+
+            name = name.Trim();
+            return await _productCollection
+                .Find(p => p.Name == name)
+                .Sort(Builders<Product>.Sort.Ascending(p => p.Name))
+                .ToListAsync();
+        }
+
         public async Task<Product?> GetProductAsync(string productId)
         {
             var product = await _productCollection
