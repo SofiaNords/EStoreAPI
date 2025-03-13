@@ -6,7 +6,7 @@ namespace EStoreAPI.Services
     {
         Task<IEnumerable<Product>> GetAllProductsAsync();
 
-        Task<IEnumerable<Product>> GetAllProductsAsync(string? name, string? searchQuery);
+        Task<IEnumerable<Product>> GetAllProductsAsync(string? name, string? searchQuery, string? productNumber);
 
         Task<Product?> GetProductAsync(string productId);
 

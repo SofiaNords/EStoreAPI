@@ -18,7 +18,7 @@ namespace EStoreAPI.Services
             return await _productCollection.Find(p => true).ToListAsync();
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync(string? name, string? searchQuery)
+        public async Task<IEnumerable<Product>> GetAllProductsAsync(string? name, string? searchQuery, string? productNumber)
         {
             var filter = Builders<Product>.Filter.Empty;
 
@@ -28,12 +28,19 @@ namespace EStoreAPI.Services
                 filter = filter & Builders<Product>.Filter.Eq(p => p.Name, name);
             }
 
+            if (!string.IsNullOrWhiteSpace(productNumber))
+            {
+                productNumber = productNumber.Trim();
+                filter = filter & Builders<Product>.Filter.Eq(p => p.ProductNumber, productNumber);
+            }
+
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 searchQuery = searchQuery.Trim();
                 var searchFilter = Builders<Product>.Filter.Or(
                     Builders<Product>.Filter.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(searchQuery, "i")),
-                    Builders<Product>.Filter.Regex(p => p.Description, new MongoDB.Bson.BsonRegularExpression(searchQuery, "i"))
+                    Builders<Product>.Filter.Regex(p => p.Description, new MongoDB.Bson.BsonRegularExpression(searchQuery, "i")),
+                    Builders<Product>.Filter.Regex(p => p.ProductNumber, new MongoDB.Bson.BsonRegularExpression(searchQuery, "i"))
                 );
                 filter = filter & searchFilter;
             }
