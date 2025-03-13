@@ -1,5 +1,6 @@
 ﻿using EStoreAPI.Entities;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace EStoreAPI.Services
 {
@@ -17,18 +18,31 @@ namespace EStoreAPI.Services
             return await _productCollection.Find(p => true).ToListAsync();
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync(string? name)
+        public async Task<IEnumerable<Product>> GetAllProductsAsync(string? name, string? searchQuery)
         {
-            if (string.IsNullOrEmpty(name))
+            var filter = Builders<Product>.Filter.Empty;
+
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                return await GetAllProductsAsync();
+                name = name.Trim();
+                filter = filter & Builders<Product>.Filter.Eq(p => p.Name, name);
             }
 
-            name = name.Trim();
-            return await _productCollection
-                .Find(p => p.Name == name)
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.Trim();
+                var searchFilter = Builders<Product>.Filter.Or(
+                    Builders<Product>.Filter.Regex(p => p.Name, new MongoDB.Bson.BsonRegularExpression(searchQuery, "i")),
+                    Builders<Product>.Filter.Regex(p => p.Description, new MongoDB.Bson.BsonRegularExpression(searchQuery, "i"))
+                );
+                filter = filter & searchFilter;
+            }
+
+            var products = await _productCollection.Find(filter)
                 .Sort(Builders<Product>.Sort.Ascending(p => p.Name))
                 .ToListAsync();
+
+            return products;
         }
 
         public async Task<Product?> GetProductAsync(string productId)
