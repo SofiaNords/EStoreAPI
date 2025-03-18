@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EStoreAPI", "EStoreAPI.csproj", "{251816B2-9C33-44C5-87A6-5B992756E512}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EStore", "..\TestBlazor\EStore.csproj", "{04BFF031-9BD6-4ECD-BE3D-C7C208D7A6F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{251816B2-9C33-44C5-87A6-5B992756E512}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{251816B2-9C33-44C5-87A6-5B992756E512}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{251816B2-9C33-44C5-87A6-5B992756E512}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04BFF031-9BD6-4ECD-BE3D-C7C208D7A6F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04BFF031-9BD6-4ECD-BE3D-C7C208D7A6F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04BFF031-9BD6-4ECD-BE3D-C7C208D7A6F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04BFF031-9BD6-4ECD-BE3D-C7C208D7A6F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {683CEE08-229E-4102-AB03-5DBDA74921BA}
 	EndGlobalSection
 EndGlobal
