@@ -4,5 +4,6 @@
     {
         public string CustomerId { get; set; }
         public List<OrderItemForCreationDto> Items { get; set; }
+        public DateTime OrderDate { get; set; }
     }
 }
