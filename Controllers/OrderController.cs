@@ -19,6 +19,30 @@ namespace EStoreAPI.Controllers
             _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
         }
 
+        /// <summary>
+        /// Get all orders
+        /// </summary>
+        /// <response code="200">
+        /// Returns a list with orders
+        /// </response>
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<OrderDto>), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetAllOrders()
+        {
+            var orders = await _orderRepository.GetAllOrdersAsync();
+
+            if (orders == null || !orders.Any())
+            {
+                return NotFound();
+            }
+
+            var orderDto = _mapper.Map<IEnumerable<OrderDto>>(orders);
+
+            return Ok(orderDto);
+        }
+
 
         /// <summary>
         /// Get a specifik order by id

@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EStoreAPI", "EStoreAPI.csproj", "{251816B2-9C33-44C5-87A6-5B992756E512}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EStore", "..\EStore\EStore.csproj", "{947666C9-BAFC-2EE5-C1F4-60C025869012}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{251816B2-9C33-44C5-87A6-5B992756E512}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{251816B2-9C33-44C5-87A6-5B992756E512}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{251816B2-9C33-44C5-87A6-5B992756E512}.Release|Any CPU.Build.0 = Release|Any CPU
+		{947666C9-BAFC-2EE5-C1F4-60C025869012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{947666C9-BAFC-2EE5-C1F4-60C025869012}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{947666C9-BAFC-2EE5-C1F4-60C025869012}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{947666C9-BAFC-2EE5-C1F4-60C025869012}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1565EE6D-A10A-4D6C-ADD9-7C53E88F0D53}
 	EndGlobalSection
 EndGlobal
