@@ -12,6 +12,11 @@ namespace EStoreAPI.Services
             _orderCollection = database.GetCollection<Order>("orders");
         }
 
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        {
+            return await _orderCollection.Find(o => true).ToListAsync();
+        }
+
         public async Task<Order?> GetOrderAsync(string orderId)
         {
             return await _orderCollection
