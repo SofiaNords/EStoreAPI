@@ -16,5 +16,8 @@ namespace EStoreAPI.Entities
         [BsonRequired]
         public List<OrderItem> Items { get; set; }
 
+        [BsonRequired]
+        public DateTime OrderDate { get; set; }
+
     }
 }
