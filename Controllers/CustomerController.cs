@@ -17,14 +17,16 @@ namespace EStoreAPI.Controllers
         public CustomerController(ICustomerRepository customerRepository,
             IMapper mapper)
         {
-            _customerRepository = customerRepository ?? throw new ArgumentException(nameof(customerRepository));
-            _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
+            _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
         /// Get all customers
         /// </summary>
-        /// <response code="200">Returns a list with customers</response>
+        /// <response code="200">Returns a list of customers. If no customers are found, returns an empty list.</response>
+        /// <response code="404">No customers found</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<CustomerDto>), 200)]
         [ProducesResponseType(404)]
@@ -43,10 +45,12 @@ namespace EStoreAPI.Controllers
         }
 
         /// <summary>
-        /// Get a specific product by id
+        /// Get a specific customer by id
         /// </summary>
         /// <param name="id"></param>
-        /// <response code="200">Returns a specific product by id</response>
+        /// <response code="200">Returns the customer details if found</response>
+        /// <response code="404">If no customer with the specified id is found</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(CustomerDto), 200)]
         [ProducesResponseType(404)]
@@ -68,9 +72,10 @@ namespace EStoreAPI.Controllers
         /// <summary>
         /// Add a new customer
         /// </summary>
-        /// <param name="customerForCreationDto">
-        /// The customer information to create</param>
-        /// <response code="201">Returns the created customer</response>
+        /// <param name="customerForCreationDto">The customer information to create</param>
+        /// <response code="201">Returns the created customer with a location header to access the newly created customer</response>
+        /// <response code="409">Conflict, if a customer with the provided email already exists</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost]
         [ProducesResponseType(typeof(CustomerDto), 201)]
         [ProducesResponseType(409)]
@@ -80,7 +85,7 @@ namespace EStoreAPI.Controllers
             var existingCustomerEmail = await _customerRepository.GetCustomerEmailAsync(customerForCreationDto.Email);
             if (existingCustomerEmail != null)
             {
-                return Conflict("Customer with this email address already esists.");
+                return Conflict("Customer with this email address already exists.");
             }
 
             var customer = _mapper.Map<Customer>(customerForCreationDto);
@@ -89,7 +94,7 @@ namespace EStoreAPI.Controllers
 
             var customerDto = _mapper.Map<CustomerDto>(customer);
           
-            return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, customer);
+            return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, customerDto);
         }
 
 
@@ -98,8 +103,9 @@ namespace EStoreAPI.Controllers
         /// </summary>
         /// <param name="id">The unique identifier of the customer to delete</param>
         /// <response code="204">The customer was successfully deleted</response>
-        /// <response code="400">If the id is invalid</response>
-        /// <response code="404">If the customer was not found</response>
+        /// <response code="400">If the id is invalid or the format is incorrect</response>
+        /// <response code="404">If no customer with the specified id was found</response>
+        /// <response code="500">Internal server error</response>
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -136,9 +142,9 @@ namespace EStoreAPI.Controllers
         /// <param name="id">The unique identifier of the customer to update</param>
         /// <param name="customerForUpdateDto">The customer information to update</param>
         /// <response code="200">If the customer was successfully updated</response>
-        /// <response code="400">If the id is invalid or the update data is invalid</response>
-        /// <response code="404">If the customer was not found</response>
-        /// <response code="500">If an internal server error occurs</response>
+        /// <response code="400">If the id is invalid or the update data is incomplete</response>
+        /// <response code="404">If no customer with the specified id was found</response>
+        /// <response code="500">If an internal server error</response>
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(CustomerForUpdateDto), 200)]
         [ProducesResponseType(400)]

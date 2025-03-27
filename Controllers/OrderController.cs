@@ -23,11 +23,11 @@ namespace EStoreAPI.Controllers
         /// Get all orders
         /// </summary>
         /// <response code="200">
-        /// Returns a list with orders
+        /// Returns a list of orders. If no orders are found, returns an empty list.
         /// </response>
+        /// <response code="500">Internal server error</response>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<OrderDto>), 200)]
-        [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<ActionResult<IEnumerable<OrderDto>>> GetAllOrders()
         {
@@ -35,7 +35,7 @@ namespace EStoreAPI.Controllers
 
             if (orders == null || !orders.Any())
             {
-                return NotFound();
+                return Ok(new List<OrderDto>());
             }
 
             var orderDto = _mapper.Map<IEnumerable<OrderDto>>(orders);
@@ -45,10 +45,12 @@ namespace EStoreAPI.Controllers
 
 
         /// <summary>
-        /// Get a specifik order by id
+        /// Get a specific order by id
         /// </summary>
-        /// <param name="id"></param>
-        /// <response code="200">Returns a specifik order by id</response>
+        /// <param name="id">The unique identifier of the order</param>
+        /// <response code="200">Returns the order details</response>
+        /// <response code="404">If no order with the specified id is found</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(OrderDto), 200)]
         [ProducesResponseType(404)]
@@ -72,7 +74,8 @@ namespace EStoreAPI.Controllers
         /// Add a new order
         /// </summary>
         /// <param name="orderForCreationDto">The order information to create</param>
-        /// <response code="201">Returns the created order</response>
+        /// <response code="201">Returns the created order with a location header to access the newly created order</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost]
         [ProducesResponseType(typeof(OrderDto), 201)]
         [ProducesResponseType(500)]
@@ -80,36 +83,18 @@ namespace EStoreAPI.Controllers
         {
             var order = _mapper.Map<Order>(orderForCreationDto);
 
-            await _orderRepository.AddOrderAsync(order);
+            try
+            {
+                await _orderRepository.AddOrderAsync(order);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while creating the order.");
+            }
 
             var orderDto = _mapper.Map<OrderDto>(order);
 
             return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, orderDto);
         }
-
-        ///// <summary>
-        ///// Get all orders on a specifik customer by customer id
-        ///// </summary>
-        ///// <param name="customerId">The order information by a specifik customer</param>
-        ///// <response code="200">Returns the orders by a specifik customer</response>
-        //[HttpGet("customer/{customerId}")]
-        //public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrdersByCustomerId(string customerId)
-        //{
-        //    // Hämta alla ordrar för kunden
-        //    var orders = await _orderRepository.GetOrdersByCustomerIdAsync(customerId);
-
-        //    // Om inga ordrar hittas
-        //    if (orders == null || !orders.Any())
-        //    {
-        //        return NotFound("No orders found for this customer.");
-        //    }
-
-        //    // Mappa ordrarna till DTOs
-        //    var orderDtos = _mapper.Map<IEnumerable<OrderDto>>(orders);
-
-        //    // Skicka tillbaka de mappade ordrorna
-        //    return Ok(orderDtos);
-        //}
-
     }
 }
