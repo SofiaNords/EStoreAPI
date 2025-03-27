@@ -1,237 +1,482 @@
-﻿# API Specification - EStoreAPI
+﻿# EStore API Specification
 
-Den här specifikationen beskriver API:ets olika endpoints för `Customers`, `Orders`, och `Products` som finns i EStoreAPI.
+## API Information
+- **Name**: EStoreAPI
+- **Version**: 1
+- **Description**: An ASP.NET Core API for managing customers, orders and products.
+- **Contact Information**: sofia.k.nordstrom@gmail.com
 
 ---
 
-Namn: EstoreAPI
 
-Version: 1
+## Customer Endpoints
 
-Beskrivning: Ett ASP.NET Core API 
-
-Kontaktinformation: sofia.k.nordstrom@gmail.com
-
-## Endpoints & HTTP-metoder
-
-### Customer Endpoints 
-
-#### 1. **Get All Customers**
-
-- **Metod:** `GET`
-- **URL:** `/api/customers`
-- **Beskrivning:** Hämtar alla kunder.
+### Get All Customers
+- **HTTP Method:** `GET`
+- **Route:** `/api/customers`
 - **Query Parameters:**  
-    - `searchQuery` (valfri): Textsträng för att filtrera kunder på email.
-- **Svar:**
-    - **200 OK:** Lista med kunder i form av `CustomerDto`.
-    - **404 Not Found:** Om inga kunder hittas.
-    - **500 Internal Server Error:** Vid ett serverfel.
+  - `searchQuery` (optional): A string to filter customers by email.
+- **Responses:**
+  - **200 OK**: Returns a list of customers in the form of `CustomerDto`.
+  - **404 Not Found**: If no customers are found.
+  - **500 Internal Server Error**: If there is a server error.
 
-#### 2. **Get Customer by ID**
+#### Example Request:
 
-- **Metod:** `GET`
-- **URL:** `/api/customers/{id}`
-- **Beskrivning:** Hämtar en specifik kund baserat på kundens ID.
-- **Path Parameters:**  
-    - `id`: Kundens unika ID.
-- **Svar:**
-    - **200 OK:** Kund i form av `CustomerDto`.
-    - **404 Not Found:** Om kunden inte hittas.
-    - **500 Internal Server Error:** Vid ett serverfel.
+GET /api/customers?searchQuery=johan
 
-#### 3. **Create Customer**
 
-- **Metod:** `POST`
-- **URL:** `/api/customers`
-- **Beskrivning:** Skapar en ny kund.
-- **Body:**
-    - **CustomerForCreationDto:** Objekt som innehåller kundens namn, email och andra nödvändiga uppgifter.
+#### Example Response:
+
 ```
 [
   {
-    "id": "string",
-    "firstName": "string",
-    "lastName": "string",
-    "email": "string",
-    "mobile": "string",
-    "street": "string",
-    "city": "string",
-    "postalCode": "string",
-    "country": "string"
+    "id": "67e2aa66092c57ebff2e026c",
+    "firstName": "Johan",
+    "lastName": "Nilsson",
+    "email": "johan.nilsson@example.com",
+    "mobile": "46702345678",
+    "street": "Lilla Vägen 34",
+    "city": "Göteborg",
+    "postalCode": "456 78",
+    "country": "Sverige"
+  },
+  {
+    "id": "67e2aade092c57ebff2e026d",
+    "firstName": "Lisa",
+    "lastName": "Johansson",
+    "email": "lisa.johansson@example.com",
+    "mobile": "46703456789",
+    "street": "Solgatan 56",
+    "city": "Malmö",
+    "postalCode": "789 01",
+    "country": "Sverige"
+  }
+
+```
+---
+
+### Get Customer by ID
+- **HTTP Method:** `GET`
+- **Route:** `/api/customers/{id}`
+- **Path Parameters:**
+  - `id` (string): The unique ID of the customer.
+- **Responses:**
+  - **200 OK**: Returns the customer details in the form of `CustomerDto`.
+  - **404 Not Found**: If the customer is not found.
+  - **500 Internal Server Error**: If there is a server error.
+
+#### Example Request:
+
+GET /api/customers/605c72ef153207001f7a5f1
+
+#### Example Response:
+```
+{
+  "id": "67e2aade092c57ebff2e026d",
+  "firstName": "Lisa",
+  "lastName": "Johansson",
+  "email": "lisa.johansson@example.com",
+  "mobile": "46703456789",
+  "street": "Solgatan 56",
+  "city": "Malmö",
+  "postalCode": "789 01",
+  "country": "Sverige"
+}
+
+```
+
+---
+
+### Create Customer
+- **HTTP Method:** `POST`
+- **Route:** `/api/customers`
+- **Body:**
+  - **CustomerForCreationDto**: The object containing customer details to create.
+- **Responses:**
+  - **201 Created**: If the customer was successfully created.
+  - **409 Conflict**: If a customer with the same email already exists.
+  - **500 Internal Server Error**: If there is a server error.
+
+#### Example Request:
+
+POST /api/customers
+
+Content-Type: application/json
+
+
+```
+{
+"firstName": "Anna",
+"lastName": "Eriksson",
+"email": "anna.eriksson@example.com",
+"mobile": "46701234567",
+"street": "Storgatan 12",
+"city": "Stockholm",
+"postalCode": "123 45",
+"country": "Sverige"
+}
+```
+
+#### Example Response:
+```
+{
+"id": "67e2a1236e471b5a19775b99",
+"firstName": "Anna",
+"lastName": "Eriksson",
+"email": "anna.eriksson@example.com",
+"mobile": "46701234567",
+"street": "Storgatan 12",
+"city": "Stockholm",
+"postalCode": "123 45",
+"country": "Sverige"
+}
+```
+---
+
+### Delete Customer by ID
+- **HTTP Method:** `DELETE`
+- **Route:** `/api/customers/{id}`
+- **Path Parameters:**
+  - `id` (string): The unique ID of the customer to delete.
+- **Responses:**
+  - **204 No Content**: If the customer was successfully deleted.
+  - **400 Bad Request**: If the ID format is invalid.
+  - **404 Not Found**: If the customer is not found.
+  - **500 Internal Server Error**: If there is a server error.
+
+#### Example Request:
+
+DELETE /api/customers/605c72ef153207001f7a5f1
+
+---
+
+### Update Customer by ID
+- **HTTP Method:** `PUT`
+- **Route:** `/api/customers/{id}`
+- **Path Parameters:**
+  - `id` (string): The unique ID of the customer to update.
+- **Body:**
+  - **CustomerForUpdateDto**: The object containing updated customer details.
+- **Responses:**
+  - **200 OK**: If the customer was successfully updated.
+  - **400 Bad Request**: If the ID format is invalid or the updated data is incorrect.
+  - **404 Not Found**: If the customer is not found.
+  - **500 Internal Server Error**: If there is a server error.
+
+#### Example Request:
+
+PUT /api/customers/67e2a1236e471b5a19775b99
+
+Content-Type: application/json
+
+
+```
+{
+"firstName": "Anna",
+"lastName": "Eriksson",
+"email": "anna.eriksson@example.com",
+"mobile": "46701234567",
+"street": "Storgatan 12",
+"city": "Stockholm",
+"postalCode": "123 45",
+"country": "Sverige"
+}
+```
+
+#### Example Response:
+```
+{
+"firstName": "Anna",
+"lastName": "Eriksson",
+"email": "anna.eriksson@example.com",
+"mobile": "46701234567",
+"street": "Storgatan 12",
+"city": "Stockholm",
+"postalCode": "123 45",
+"country": "Sverige"
+}
+```
+---
+
+## Order Endpoints
+
+### Get All Orders
+- **HTTP Method:** `GET`
+- **Route:** `/api/orders`
+- **Responses:**
+  - **200 OK**: Returns a list of orders. If no orders are found, returns an empty list..
+  - **500 Internal Server Error**: If there is a server error.
+
+### Get Order by ID
+- **HTTP Method:** `GET`
+- **Route:** `/api/orders/{id}`
+- **Path Parameters:**
+  - `id` (string): The unique ID of the order.
+- **Responses:**
+  - **200 OK**: Returns the order details in the form of `OrderDto`.
+  - **404 Not Found**: If the order is not found.
+  - **500 Internal Server Error**: If there is a server error.
+
+#### Example Request:
+
+GET /api/orders/67e3fb76c413f2a898382a73
+
+#### Example Response:
+
+```
+{
+  "id": "67e3fb76c413f2a898382a73",
+  "customerId": "67e2b9159a2c1e8c0052693a",
+  "items": [
+    {
+      "productId": "67e2cce1784ff72328012892",
+      "quantity": 1,
+      "price": 8499
+    },
+    {
+      "productId": "67e2cce1784ff72328012892",
+      "quantity": 2,
+      "price": 8499
+    }
+  ],
+  "orderDate": "2025-03-26T13:04:19.676Z"
+}
+```
+---
+
+### Create Order
+- **HTTP Method:** `POST`
+- **Route:** `/api/orders`
+- **Body:**
+  - **OrderForCreationDto**: The object containing order details.
+- **Responses:**
+  - **201 Created**: If the order was successfully created.
+  - **500 Internal Server Error**: If there is a server error.
+
+#### Example Request:
+
+POST /api/orders
+
+Content-Type: application/json
+
+```
+{
+    "customerId": "67e2aa66092c57ebff2e026c",
+    "items": [
+      {
+        "productId": "67e2cce1784ff72328012892",
+        "quantity": 1,
+        "price": 8499
+      }
+    ],
+    "orderDate": "2025-03-25T18:56:15.84Z"
+}
+```
+
+#### Example Response:
+
+```
+{
+    "id": "67e2fc5983375ce5b457e155",
+    "customerId": "67e2aa66092c57ebff2e026c",
+    "items": [
+      {
+        "productId": "67e2cce1784ff72328012892",
+        "quantity": 1,
+        "price": 8499
+      }
+    ],
+    "orderDate": "2025-03-25T18:56:15.84Z"
   }
 ```
-- **Svar:**
-    - **201 Created:** Om kunden skapades framgångsrikt.
-    - **409 Conflict:** Om en kund med samma email redan existerar.
-    - **500 Internal Server Error:** Vid ett serverfel.
-
-#### 4. **Delete Customer by ID**
-
-- **Metod:** `DELETE`
-- **URL:** `/api/customers/{id}`
-- **Beskrivning:** Tar bort en kund baserat på kundens ID.
-- **Path Parameters:**  
-    - `id`: Kundens unika ID.
-- **Svar:**
-    - **204 No Content:** Om kunden raderas framgångsrikt.
-    - **400 Bad Request:** Om ID-formatet är ogiltigt.
-    - **404 Not Found:** Om kunden inte hittas.
-    - **500 Internal Server Error:** Vid ett serverfel.
-
-#### 5. **Update Customer by ID**
-
-- **Metod:** `PUT`
-- **URL:** `/api/customers/{id}`
-- **Beskrivning:** Uppdaterar en kund baserat på kundens ID.
-- **Path Parameters:**  
-    - `id`: Kundens unika ID.
-- **Body:**  
-    - **CustomerForUpdateDto:** Objekt som innehåller den uppdaterade kundinformationen.
-    ``` 
-    {
-      "firstName": "string",
-      "lastName": "string",
-      "email": "string",
-      "mobile": "string",
-      "street": "string",
-      "city": "string",
-      "postalCode": "string",
-      "country": "string"
-    }
-    ```
-- **Svar:**
-    - **200 OK:** Om kunden uppdaterades framgångsrikt.
-    - **400 Bad Request:** Om ID-formatet är ogiltigt eller om de uppdaterade data är felaktiga.
-    - **404 Not Found:** Om kunden inte hittas.
-    - **500 Internal Server Error:** Vid ett serverfel.
 
 ---
 
-### Order Endpoints
+## Product Endpoints
 
-#### 1. **Get Order by ID**
-
-- **Metod:** `GET`
-- **URL:** `/api/orders/{id}`
-- **Beskrivning:** Hämtar en specifik order baserat på order-ID.
-- **Path Parameters:**  
-    - `id`: Orderns unika ID.
-- **Svar:**
-    - **200 OK:** Order i form av `OrderDto`.
-    - **404 Not Found:** Om ordern inte hittas.
-    - **500 Internal Server Error:** Vid ett serverfel.
-
-#### 2. **Create Order**
-
-- **Metod:** `POST`
-- **URL:** `/api/orders`
-- **Beskrivning:** Skapar en ny order.
-- **Body:**
-    - **OrderForCreationDto:** Objekt som innehåller orderinformation.
-    ```
-    {
-      "customerId": "string",
-      "items": [
-        {
-          "productId": "string",
-          "quantity": 0,
-          "price": 0
-        }
-      ]
-    }
-    ```
-- **Svar:**
-    - **201 Created:** Om ordern skapades framgångsrikt.
-    - **500 Internal Server Error:** Vid ett serverfel.
-
----
-
-### Product Endpoints
-
-#### 1. **Get All Products**
-
-- **Metod:** `GET`
-- **URL:** `/api/products`
-- **Beskrivning:** Hämtar alla produkter.
+### Get All Products
+- **HTTP Method:** `GET`
+- **Route:** `/api/products`
 - **Query Parameters:**  
-    - `name` (valfri): Textsträng för att filtrera på produktens namn.
-    - `searchQuery` (valfri): Textsträng för att söka på namn eller beskrivning.
-    - `productNumber` (valfri): För att filtrera på produktens nummer.
-- **Svar:**
-    - **200 OK:** Lista med produkter i form av `ProductDto`.
-    - **404 Not Found:** Om inga produkter hittas.
-    - **500 Internal Server Error:** Vid ett serverfel.
+  - `name` (optional): A string to filter by product name.
+  - `searchQuery` (optional): A string to search by product name or description.
+  - `productNumber` (optional): To filter by product number.
+- **Responses:**
+  - **200 OK**: Returns a list of products in the form of `ProductDto`.
+  - **404 Not Found**: If no products are found.
+  - **500 Internal Server Error**: If there is a server error.
 
-#### 2. **Get Product by ID**
+#### Example Request:
 
-- **Metod:** `GET`
-- **URL:** `/api/products/{id}`
-- **Beskrivning:** Hämtar en specifik produkt baserat på produktens ID.
-- **Path Parameters:**  
-    - `id`: Produktens unika ID.
-- **Svar:**
-    - **200 OK:** Produkt i form av `ProductDto`.
-    - **404 Not Found:** Om produkten inte hittas.
-    - **500 Internal Server Error:** Vid ett serverfel.
+GET /api/customers?searchQuery=sup
 
-#### 3. **Create Product**
 
-- **Metod:** `POST`
-- **URL:** `/api/products`
-- **Beskrivning:** Skapar en ny produkt.
+#### Example Response:
+
+```
+[
+  {
+    "id": "67e2cf59b64dd8e366890b6b",
+    "productNumber": "SUP003",
+    "name": "Breeze Glide 11’0”",
+    "description": "En mångsidig och lätt SUP som är perfekt för både floder, sjöar och kustnära paddling. Kommer med en praktisk bärväska och paddel för att göra ditt äventyr ännu enklare.",
+    "price": 4799,
+    "category": "SUP",
+    "isDiscontinued": false
+  },
+  {
+    "id": "67e2cf28b64dd8e366890b6a",
+    "productNumber": "SUP002",
+    "name": "Glacier Explorer 12’0”",
+    "description": "En högpresterande SUP för långdistanspaddling och äventyr på öppet vatten. Den styva designen och stora volymen gör det lätt att stå stabilt även under utmanande förhållanden.",
+    "price": 7199,
+    "category": "SUP",
+    "isDiscontinued": false
+  },
+  {
+    "id": "67e2ceecb64dd8e366890b69",
+    "productNumber": "SUP001",
+    "name": "Wave Rider 10’6”",
+    "description": "Den perfekta suven för både nybörjare och erfarna paddlare. Med en längd på 10’6” och en stabil konstruktion ger denna SUP en jämn och säker upplevelse, oavsett om du vill paddla på lugnt eller något rörigare vatten.",
+    "price": 5299,
+    "category": "SUP",
+    "isDiscontinued": false
+  }
+]
+
+```
+---
+
+### Get Product by ID
+- **HTTP Method:** `GET`
+- **Route:** `/api/products/{id}`
+- **Path Parameters:**
+  - `id` (string): The unique ID of the product.
+- **Responses:**
+  - **200 OK**: Returns the product details in the form of `ProductDto`.
+  - **404 Not Found**: If the product is not found.
+  - **500 Internal Server Error**: If there is a server error.
+
+#### Example Request:
+
+GET /api/products/67e2c66810089f600c922c99
+
+#### Example Response:
+```
+{
+  "id": "67e2c66810089f600c922c99",
+  "productNumber": "KAY001",
+  "name": "Ocean Explorer 2000",
+  "description": "Den perfekta havskajaken för äventyrslystna! Designad för stabilitet och hastighet på både lugnt och lite mer utmanande vatten. Med en ergonomisk sits och vattentåliga förvaringsutrymmen är den både bekväm och praktisk för längre turer.",
+  "price": 12499,
+  "category": "Havskajaker",
+  "isDiscontinued": false
+}
+```
+
+---
+
+### Create Product
+- **HTTP Method:** `POST`
+- **Route:** `/api/products`
 - **Body:**
-    - **ProductForCreationDto:** Objekt som innehåller produktinformation.
-    ```
-    {
-      "productNumber": "string",
-      "name": "string",
-      "description": "string",
-      "price": 0,
-      "category": "string",
-      "isDiscontinued": true
-    }
-    ```
-- **Svar:**
-    - **201 Created:** Om produkten skapades framgångsrikt.
-    - **409 Conflict:** Om produkten med samma produktnummer redan existerar.
-    - **500 Internal Server Error:** Vid ett serverfel.
+  - **ProductForCreationDto**: The object containing product details to create.
+- **Responses:**
+  - **201 Created**: If the product was successfully created.
+  - **409 Conflict**: If a product with the same product number already exists.
+  - **500 Internal Server Error**: If there is a server error.
 
-#### 4. **Delete Product by ID**
+#### Example Request:
 
-- **Metod:** `DELETE`
-- **URL:** `/api/products/{id}`
-- **Beskrivning:** Tar bort en produkt baserat på produktens ID.
-- **Path Parameters:**  
-    - `id`: Produktens unika ID.
-- **Svar:**
-    - **204 No Content:** Om produkten raderas framgångsrikt.
-    - **400 Bad Request:** Om ID-formatet är ogiltigt.
-    - **404 Not Found:** Om produkten inte hittas.
-    - **500 Internal Server Error:** Vid ett serverfel.
+POST /api/products
 
-#### 5. **Update Product by ID**
+Content-Type: application/json
 
-- **Metod:** `PUT`
-- **URL:** `/api/products/{id}`
-- **Beskrivning:** Uppdaterar en produkt baserat på produktens ID.
-- **Path Parameters:**  
-    - `id`: Produktens unika ID.
-- **Body:**  
-    - **ProductForUpdateDto:** Objekt som innehåller den uppdaterade produktinformationen.
-    ```
-    {
-      "productNumber": "string",
-      "name": "string",
-      "description": "string",
-      "price": 0,
-      "category": "string",
-      "isDiscontinued": true
-    }
-    ```
-- **Svar:**
-    - **200 OK:** Om produkten uppdaterades framgångsrikt.
-    - **400 Bad Request:** Om ID-formatet är ogiltigt eller om de uppdaterade data är felaktiga.
-    - **404 Not Found:** Om produkten inte hittas.
-    - **409 Conflict:** Om en produkt med samma produktnummer redan finns.
-    - **500 Internal Server Error:** Vid ett serverfel.
+
+```
+{
+  "productNumber": "KAY001",
+  "name": "Ocean Explorer 2000",
+  "description": "Den perfekta havskajaken för äventyrslystna! Designad för stabilitet och hastighet på både lugnt och lite mer utmanande vatten. Med en ergonomisk sits och vattentåliga förvaringsutrymmen är den både bekväm och praktisk för längre turer.",
+  "price": 12499,
+  "category": "Havskajaker",
+  "isDiscontinued": false
+}
+```
+
+#### Example Response:
+```
+{
+  "id": "67e2c66810089f600c922c99",
+  "productNumber": "KAY001",
+  "name": "Ocean Explorer 2000",
+  "description": "Den perfekta havskajaken för äventyrslystna! Designad för stabilitet och hastighet på både lugnt och lite mer utmanande vatten. Med en ergonomisk sits och vattentåliga förvaringsutrymmen är den både bekväm och praktisk för längre turer.",
+  "price": 12499,
+  "category": "Havskajaker",
+  "isDiscontinued": false
+}
+```
+---
+
+### Delete Product by ID
+- **HTTP Method:** `DELETE`
+- **Route:** `/api/products/{id}`
+- **Path Parameters:**
+  - `id` (string): The unique ID of the product to delete.
+- **Responses:**
+  - **204 No Content**: If the product was successfully deleted.
+  - **400 Bad Request**: If the ID format is invalid.
+  - **404 Not Found**: If the product is not found.
+  - **500 Internal Server Error**: If there is a server error.
+
+#### Example Request:
+
+DELETE /api/products/67e2c66810089f600c922c99
+
+---
+
+### Update Product by ID
+- **HTTP Method:** `PUT`
+- **Route:** `/api/products/{id}`
+- **Path Parameters:**
+  - `id` (string): The unique ID of the product to update.
+- **Body:**
+  - **ProductForUpdateDto**: The object containing updated product details.
+- **Responses:**
+  - **200 OK**: If the product was successfully updated.
+  - **400 Bad Request**: If the ID format is invalid or the updated data is incorrect.
+  - **404 Not Found**: If the product is not found.
+  - **409 Conflict**: If a product with the same product number already exists
+  - **500 Internal Server Error**: If there is a server error.
+
+#### Example Request:
+
+PUT /api/products/67e2c66810089f600c922c99
+
+Content-Type: application/json
+
+
+```
+{
+  "productNumber": "KAY001",
+  "name": "Ocean Explorer 2000",
+  "description": "Den perfekta havskajaken för äventyrslystna! Designad för stabilitet och hastighet på både lugnt och lite mer utmanande vatten. Med en ergonomisk sits och vattentåliga förvaringsutrymmen är den både bekväm och praktisk för längre turer.",
+  "price": 12499,
+  "category": "Havskajaker",
+  "isDiscontinued": false
+}
+```
+
+#### Example Response:
+```
+{
+  "productNumber": "KAY001",
+  "name": "Ocean Explorer 2000",
+  "description": "Den perfekta havskajaken för äventyrslystna! Designad för stabilitet och hastighet på både lugnt och lite mer utmanande vatten. Med en ergonomisk sits och vattentåliga förvaringsutrymmen är den både bekväm och praktisk för längre turer.",
+  "price": 12499,
+  "category": "Havskajaker",
+  "isDiscontinued": false
+}
+```
+---
