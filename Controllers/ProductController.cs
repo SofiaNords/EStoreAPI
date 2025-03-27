@@ -96,7 +96,7 @@ namespace EStoreAPI.Controllers
 
             var productDto = _mapper.Map<ProductDto>(product); 
 
-            return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
+            return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, productDto);
         }
 
 
