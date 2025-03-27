@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EStoreAPI.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace EStoreAPI.Models
 {
@@ -6,6 +7,7 @@ namespace EStoreAPI.Models
     {
         [Required(ErrorMessage = "Produkt-ID är obligatoriskt")]
         [MaxLength(50, ErrorMessage = "Produkt-ID får inte vara längre än 50 tecken")]
+        [ObjectIdValidation(ErrorMessage = "Ogiltigt ProductId. Måste vara ett giltigt ObjectId")]
         public string ProductId { get; set; }
 
         [Required(ErrorMessage = "Antal är obligatoriskt")]
